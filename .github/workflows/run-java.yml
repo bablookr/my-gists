@@ -1,0 +1,33 @@
+name: Run Java Code
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Java class name (e.g. - HelloWorld)'
+        required: true
+
+env:
+  INPUT_CLASS_NAME: ${{ github.event.inputs.filename }}
+
+jobs:
+  compile-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.7.0
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Compile
+        run: javac java/${INPUT_CLASS_NAME}.java
+
+      - name: Run
+        run: |
+          cd java
+          java ${INPUT_CLASS_NAME}
