@@ -1,0 +1,30 @@
+name: Run Python Code
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Python file name (e.g. - hello_world)'
+        required: true
+
+env:
+  INPUT_FILE_NAME: ${{ github.event.inputs.filename }}
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5.5.0
+        with:
+          python-version: '3.13' 
+
+      - name: Install Dependencies
+        run: pip3 install tensorflow torch transformers
+
+      - name: Run
+        run: python3 python/${INPUT_FILE_NAME}.py
