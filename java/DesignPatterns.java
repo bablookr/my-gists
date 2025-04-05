@@ -1,5 +1,3 @@
-package com.example;
-
 import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
