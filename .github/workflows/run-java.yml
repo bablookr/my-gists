@@ -1,4 +1,4 @@
-name: Run Java Code
+name: Run Java Workflow
 
 on:
   workflow_dispatch:
@@ -6,6 +6,8 @@ on:
       filename:
         description: 'Java class name (e.g. - HelloWorld)'
         required: true
+
+run-name: ${{ github.event.inputs.filename }}.java
 
 env:
   INPUT_CLASS_NAME: ${{ github.event.inputs.filename }}
