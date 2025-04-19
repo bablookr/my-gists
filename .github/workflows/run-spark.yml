@@ -1,0 +1,62 @@
+name: Run Spark Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Language'
+        required: true
+        type: choice
+        options:
+          - scala
+          - py
+      filename:
+        description: File name (e.g. - HelloWorld, hello_world)'
+        required: true
+
+run-name: ${{ github.event.inputs.filename }}.${{ github.event.inputs.language }}
+
+env:
+  LANGUAGE: ${{ github.event.inputs.language }}
+  INPUT_FILE_NAME: ${{ github.event.inputs.filename }}
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.7.0
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Scala
+        run: sudo apt-get install -y scala
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.5.0
+        with:
+          python-version: '3.9' 
+
+      - name: Install Python Dependencies
+        run: pip3 install pyspark
+
+      - name: Setup Spark
+        run: |
+          wget https://downloads.apache.org/spark/spark-3.4.4/spark-3.4.4-bin-hadoop3.tgz
+          tar -xzf spark-3.4.4-bin-hadoop3.tgz
+          export SPARK_HOME=$(pwd)/spark-3.4.4-bin-hadoop3
+
+      - name: Run
+        run: |
+          if [ "${LANGUAGE}" == "scala" ]; then
+            cd scala
+            scalac -cp "$SPARK_HOME/jars/*" ${INPUT_FILE_NAME}.scala
+            scala -cp ".:$SPARK_HOME/jars/*" com.example.${INPUT_FILE_NAME}
+          else
+            python3 python/${INPUT_FILE_NAME}.py
+          fi
