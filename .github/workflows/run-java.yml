@@ -25,9 +25,9 @@ jobs:
           java-version: '17'
 
       - name: Compile
-        run: javac java/${INPUT_CLASS_NAME}.java
+        run: javac java/com/example/${INPUT_CLASS_NAME}.java
 
       - name: Run
         run: |
           cd java
-          java ${INPUT_CLASS_NAME}
+          java com.example.${INPUT_CLASS_NAME}
