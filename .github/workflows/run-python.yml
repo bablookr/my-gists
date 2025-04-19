@@ -1,4 +1,4 @@
-name: Run Python Code
+name: Run Python Workflow
 
 on:
   workflow_dispatch:
@@ -6,6 +6,8 @@ on:
       filename:
         description: 'Python file name (e.g. - hello_world)'
         required: true
+
+run-name: ${{ github.event.inputs.filename }}.py
 
 env:
   INPUT_FILE_NAME: ${{ github.event.inputs.filename }}
