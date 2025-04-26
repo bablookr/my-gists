@@ -62,10 +62,10 @@ jobs:
           export SPARK_HOME=$(pwd)/spark-3.5.5-bin-hadoop3
           if [ "${LANGUAGE}" == "scala" ]; then
             cd scala
-            scalac -cp "$SPARK_HOME/jars/*" ${INPUT_FILE_NAME}.scala
+            scalac -cp "$SPARK_HOME/jars/*" com/example/${INPUT_FILE_NAME}.scala
             jar -cvf ${INPUT_FILE_NAME}.jar com/example/*.class
             $SPARK_HOME/bin/spark-submit --class com.example.${INPUT_FILE_NAME} ${INPUT_FILE_NAME}.jar
           else
             cd python
-            $SPARK_HOME/bin/spark-submit ${INPUT_FILE_NAME}.py
+            $SPARK_HOME/bin/spark-submit --conf spark.jars.packages=org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.8.1 ${INPUT_FILE_NAME}.py
           fi
