@@ -1,4 +1,4 @@
-name: Run SQL
+name: Run SQL Script
 
 on:
   workflow_dispatch:
@@ -24,4 +24,7 @@ jobs:
         run: sudo /etc/init.d/mysql start
 
       - name: Run
-        run: mysql -h localhost -P 3306 -u root -proot < ${INPUT_SCRIPT_NAME}.sql
+        run: |
+          cd sql
+          mysql -h localhost -P 3306 -u root -proot -e "CREATE DATABASE test;"
+          mysql -t -h localhost -P 3306 -u root -proot test < ${INPUT_SCRIPT_NAME}.sql
