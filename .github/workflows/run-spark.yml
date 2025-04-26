@@ -34,29 +34,38 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Scala
-        run: sudo apt-get install -y scala
-
       - name: Setup Python
         uses: actions/setup-python@v5.5.0
         with:
           python-version: '3.9' 
 
-      - name: Install Python Dependencies
-        run: pip3 install pyspark
-
-      - name: Setup Spark
+      - name: Setup Scala
         run: |
-          wget https://downloads.apache.org/spark/spark-3.4.4/spark-3.4.4-bin-hadoop3.tgz
-          tar -xzf spark-3.4.4-bin-hadoop3.tgz
-          export SPARK_HOME=$(pwd)/spark-3.4.4-bin-hadoop3
+          wget -q https://downloads.lightbend.com/scala/2.12.18/scala-2.12.18.deb
+          sudo dpkg -i scala-2.12.18.deb
+
+      - name: Install Spark
+        run: |
+          wget -q https://downloads.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
+          tar -xvf spark-3.5.5-bin-hadoop3.tgz
+
+      - name: Install Python Dependencies
+        run: |
+          if [ "${LANGUAGE}" == "scala" ]; then
+            echo "Skipping as input language is scala.."
+          else
+            pip3 install numpy scipy pandas pyspark scikit-learn ucimlrepo
+          fi
 
       - name: Run
         run: |
+          export SPARK_HOME=$(pwd)/spark-3.5.5-bin-hadoop3
           if [ "${LANGUAGE}" == "scala" ]; then
             cd scala
             scalac -cp "$SPARK_HOME/jars/*" ${INPUT_FILE_NAME}.scala
-            scala -cp ".:$SPARK_HOME/jars/*" com.example.${INPUT_FILE_NAME}
+            jar -cvf ${INPUT_FILE_NAME}.jar com/example/*.class
+            $SPARK_HOME/bin/spark-submit --class com.example.${INPUT_FILE_NAME} ${INPUT_FILE_NAME}.jar
           else
-            python3 python/${INPUT_FILE_NAME}.py
+            cd python
+            $SPARK_HOME/bin/spark-submit ${INPUT_FILE_NAME}.py
           fi
