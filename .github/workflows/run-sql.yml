@@ -1,0 +1,27 @@
+name: Run SQL
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'SQL script name (e.g. - hello_world)'
+        required: true
+
+run-name: ${{ github.event.inputs.filename }}.sql
+
+env:
+  INPUT_SCRIPT_NAME: ${{ github.event.inputs.filename }}
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
+
+      - name: Run
+        run: mysql -h localhost -P 3306 -u root -proot < ${INPUT_SCRIPT_NAME}.sql
