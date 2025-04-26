@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       filename:
-        description: 'Shell script name (e.g. - hello_world)'
+        description: 'Shell script name (e.g. - hello-world)'
         required: true
       arguments:
         description: 'Arguments'
@@ -30,5 +30,5 @@ jobs:
       - name: Run
         run: |
           cd sh
-          sh ${INPUT_FILE_NAME}.sh ${ARGS}
+          sh ${INPUT_SCRIPT_NAME}.sh ${ARGS}
           tree -I venv
