@@ -25,7 +25,7 @@ class ModelServer:
         self.name = name
         self.host, self.port = deployment.split(':')
         assert self.host == 'localhost'
-        self.generator = pipeline('text-generation', model=name)
+        self.generator = pipeline('text-generation', model=name, framework='pt')
 
     def run(self):
         app = Flask(self.name)
@@ -34,7 +34,7 @@ class ModelServer:
         def generate():
             data = request.json
             prompt = data['prompt']
-            response = self.generator(prompt)
+            response = self.generator(prompt, max_new_tokens=10)
             return jsonify({"prompt": prompt, "model": self.name, "response": response})
 
         app.run(port=self.port)
