@@ -26,7 +26,7 @@ jobs:
           python-version: '3.9' 
 
       - name: Install Dependencies
-        run: pip3 install tensorflow torch transformers sentencepiece
+        run: pip3 install numpy scipy pandas scikit-learn tensorflow torch transformers sentencepiece flask tabulate
 
       - name: Run
         run: python3 python/${INPUT_FILE_NAME}.py
