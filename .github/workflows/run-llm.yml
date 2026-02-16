@@ -1,0 +1,44 @@
+name: Run LLM Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Python file name (e.g. - hello_world)'
+        required: true
+
+run-name: ${{ github.event.inputs.filename }}.py
+
+env:
+  INPUT_FILE_NAME: ${{ github.event.inputs.filename }}
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5.5.0
+        with:
+          python-version: '3.10' 
+
+      - name: Setup uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv init .
+          uv venv
+          source .venv/bin/activate
+          uv add "mcp[cli]" ollama
+
+      - name: Setup Ollama
+        run: |
+          curl -LsSf https://ollama.com/install.sh | sh
+          ollama serve > ollama.log 2>&1 &
+          sleep 10
+          ollama pull functiongemma
+
+      - name: Run
+        run: uv run python3 python/${INPUT_FILE_NAME}.py
