@@ -2,8 +2,11 @@
 
 workflow_type="$1"
 case "$workflow_type" in
-java | llm | python | sh | sql)
+java | llm | python | sql)
   INPUTS="{\"filename\":\"$2\"}"
+  ;;
+sh)
+  INPUTS="{\"filename\":\"$2\",\"arguments\":\"$3\"}"
   ;;
 spark)
   INPUTS="{\"language\":\"$2\",\"filename\":\"$3\"}"
