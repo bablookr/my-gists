@@ -19,6 +19,7 @@ run-name: ${{ github.event.inputs.filename }}.${{ github.event.inputs.language }
 env:
   LANGUAGE: ${{ github.event.inputs.language }}
   INPUT_FILE_NAME: ${{ github.event.inputs.filename }}
+  SPARK_VERSION: 3.5.8
 
 jobs:
   setup-and-run:
@@ -46,8 +47,8 @@ jobs:
 
       - name: Install Spark
         run: |
-          wget -q https://downloads.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
-          tar -xvf spark-3.5.5-bin-hadoop3.tgz
+          wget -q https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz
+          tar -xvf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
       - name: Install Python Dependencies
         run: |
@@ -59,7 +60,7 @@ jobs:
 
       - name: Run
         run: |
-          export SPARK_HOME=$(pwd)/spark-3.5.5-bin-hadoop3
+          export SPARK_HOME=$(pwd)/spark-${SPARK_VERSION}-bin-hadoop3
           if [ "${LANGUAGE}" == "scala" ]; then
             cd scala
             scalac -cp "$SPARK_HOME/jars/*" com/example/${INPUT_FILE_NAME}.scala
