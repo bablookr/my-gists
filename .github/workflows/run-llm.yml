@@ -39,6 +39,7 @@ jobs:
           ollama serve > ollama.log 2>&1 &
           sleep 10
           ollama pull functiongemma
+          ollama list
 
       - name: Run
         run: uv run python3 python/${INPUT_FILE_NAME}.py
