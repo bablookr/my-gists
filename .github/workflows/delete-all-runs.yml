@@ -1,0 +1,32 @@
+name: Delete all workflow runs
+
+on:
+  workflow_dispatch:
+
+env:
+  GITHUB_REPOSITORY: ${{ github.repository }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  delete-workflow-runs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete all
+        run: |
+          curl \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs" \
+          | jq -r '.workflow_runs[].id' \
+          | while read -r RUN_ID; do
+              echo "Deleting run $RUN_ID"
+              curl -X DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
+            done
