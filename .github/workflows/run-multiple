@@ -1,0 +1,61 @@
+name: Run Multiple Workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Workflow type (e.g. - java, python, spark, llm, all etc.)'
+        required: true
+
+run-name: Run ${{ github.event.inputs.type }} workflows
+
+env:
+  WORKFLOW_TYPE: ${{ github.event.inputs.type }}
+  GITHUB_REPOSITORY: ${{ github.repository }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  trigger-workflows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        
+      - name: Trigger java workflows
+        if: ${{ env.WORKFLOW_TYPE == 'java' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh java DesignPatterns
+
+      - name: Trigger python workflows
+        if: ${{ env.WORKFLOW_TYPE == 'python' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh python ab_testing
+          sh run-workflow.sh python custom_model
+          sh run-workflow.sh python transformers_machine_translation
+
+      - name: Trigger spark workflows
+        if: ${{ env.WORKFLOW_TYPE == 'spark' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh spark python drift_detection
+          sh run-workflow.sh spark scala MedianOf20MElements
+
+      - name: Trigger LLM workflows
+        if: ${{ env.WORKFLOW_TYPE == 'llm' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh llm run_local_mcp
+
+      - name: Trigger sh workflows
+        if: ${{ env.WORKFLOW_TYPE == 'sh' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh sh build-wheel
+          sh run-workflow.sh sh build
+
+      - name: Trigger sql workflows
+        if: ${{ env.WORKFLOW_TYPE == 'sql' || env.WORKFLOW_TYPE == 'all' }}
+        run: |
+          sh run-workflow.sh sql deduplicate_pairs
