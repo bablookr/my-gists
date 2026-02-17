@@ -41,7 +41,7 @@ jobs:
       - name: Trigger spark workflows
         if: ${{ env.WORKFLOW_TYPE == 'spark' || env.WORKFLOW_TYPE == 'all' }}
         run: |
-          sh run-workflow.sh spark python drift_detection
+          sh run-workflow.sh spark py drift_detection
           sh run-workflow.sh spark scala MedianOf20MElements
 
       - name: Trigger LLM workflows
@@ -52,8 +52,7 @@ jobs:
       - name: Trigger sh workflows
         if: ${{ env.WORKFLOW_TYPE == 'sh' || env.WORKFLOW_TYPE == 'all' }}
         run: |
-          sh run-workflow.sh sh build-wheel
-          sh run-workflow.sh sh build
+          sh run-workflow.sh sh build-wheel "--upload false --install local"
 
       - name: Trigger sql workflows
         if: ${{ env.WORKFLOW_TYPE == 'sql' || env.WORKFLOW_TYPE == 'all' }}
