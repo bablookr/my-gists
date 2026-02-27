@@ -23,7 +23,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5.5.0
         with:
-          python-version: '3.10' 
+          python-version: '3.11' 
 
       - name: Setup uv
         run: |
@@ -31,14 +31,44 @@ jobs:
           uv init .
           uv venv
           source .venv/bin/activate
-          uv add "mcp[cli]" ollama
+          uv add "mcp[cli]" \
+            ollama \
+            langchain \
+            langchain-ollama \
+            langchain-chroma \
+            langchain-community \
+            chromadb \
+            redis \
+            pypdf \
+            requests
+          uv pip list
+
+      - name: Setup Redis
+        if: ${{ env.INPUT_FILE_NAME == 'routed_tiered_rag' }}
+        run: |
+          sudo apt-get install redis
+          redis-server --daemonize yes
+          sleep 10
+
+      - name: Setup Chroma
+        if: ${{ env.INPUT_FILE_NAME == 'routed_tiered_rag' }}
+        run: |
+          ./.venv/bin/chroma run > chroma.log 2>&1 &
+          sleep 10
 
       - name: Setup Ollama
         run: |
           curl -LsSf https://ollama.com/install.sh | sh
           ollama serve > ollama.log 2>&1 &
           sleep 10
-          ollama pull functiongemma
+          if [ "${INPUT_FILE_NAME}" == "run_local_mcp" ]; then
+            ollama pull functiongemma
+          elif [ "${INPUT_FILE_NAME}" == "routed_tiered_rag" ]; then
+            ollama pull embeddinggemma
+            ollama pull gemma:2b
+          else
+            echo "Skipping ollama pull.."
+          fi
           ollama list
 
       - name: Run
