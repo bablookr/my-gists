@@ -37,6 +37,8 @@ jobs:
           sh run-workflow.sh python ab_testing
           sh run-workflow.sh python custom_model
           sh run-workflow.sh python transformers_machine_translation
+          sh run-workflow.sh python n_shot_classification
+          sh run-workflow.sh python routed_tiered_rag
 
       - name: Trigger spark workflows
         if: ${{ env.WORKFLOW_TYPE == 'spark' || env.WORKFLOW_TYPE == 'all' }}
