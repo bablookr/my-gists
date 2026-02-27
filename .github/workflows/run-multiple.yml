@@ -38,7 +38,6 @@ jobs:
           sh run-workflow.sh python custom_model
           sh run-workflow.sh python transformers_machine_translation
           sh run-workflow.sh python n_shot_classification
-          sh run-workflow.sh python routed_tiered_rag
 
       - name: Trigger spark workflows
         if: ${{ env.WORKFLOW_TYPE == 'spark' || env.WORKFLOW_TYPE == 'all' }}
@@ -50,6 +49,7 @@ jobs:
         if: ${{ env.WORKFLOW_TYPE == 'llm' || env.WORKFLOW_TYPE == 'all' }}
         run: |
           sh run-workflow.sh llm run_local_mcp
+          sh run-workflow.sh llm routed_tiered_rag
 
       - name: Trigger sh workflows
         if: ${{ env.WORKFLOW_TYPE == 'sh' || env.WORKFLOW_TYPE == 'all' }}
