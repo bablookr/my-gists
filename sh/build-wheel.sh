@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # This script creates a simple python project and demonstrates building
 # of a wheel distribution and uploading it to PyPI.
@@ -104,7 +105,7 @@ build() {
   add_readme
   add_license
 
-  python setup.py sdist bdist_wheel --plat-name macosx_11_0_arm64
+  python setup.py sdist bdist_wheel
 
   if [ "$upload" == "true" ]; then
     upload_to_pypi
@@ -129,7 +130,7 @@ install() {
     ;;
   "local")
     echo "Installing from local wheel..."
-    pip3 install dist/${PROJECT}-${VERSION}-py3-none-macosx_11_0_arm64.whl
+    pip3 install dist/${PROJECT}-${VERSION}-py3-none-any.whl
     ;;
   "editable")
     echo "Installing in editable mode..."
