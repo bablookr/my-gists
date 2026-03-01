@@ -55,6 +55,7 @@ jobs:
         if: ${{ env.WORKFLOW_TYPE == 'sh' || env.WORKFLOW_TYPE == 'all' }}
         run: |
           sh run-workflow.sh sh build-wheel "--upload false --install local"
+          sh run-workflow.sh sh elasticsearch_as_vector_store "--tlsEnabled true"
 
       - name: Trigger sql workflows
         if: ${{ env.WORKFLOW_TYPE == 'sql' || env.WORKFLOW_TYPE == 'all' }}
