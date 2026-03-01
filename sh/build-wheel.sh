@@ -80,9 +80,16 @@ add_readme() {
 add_license() {
   echo "Adding MIT License..."
   wget -q -O LICENSE https://raw.githubusercontent.com/github/choosealicense.com/refs/heads/gh-pages/_licenses/mit.txt
-  sed -i '' "s/\[year\]/$YEAR/g" LICENSE
-  sed -i '' "s/\[fullname\]/$AUTHOR/g" LICENSE
-  sed -i '' '/^---$/,/^---$/d' LICENSE
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/\[year\]/$YEAR/g" LICENSE
+    sed -i '' "s/\[fullname\]/$AUTHOR/g" LICENSE
+    sed -i '' '/^---$/,/^---$/d' LICENSE
+  else
+    sed -i "s/\[year\]/$YEAR/g" LICENSE
+    sed -i "s/\[fullname\]/$AUTHOR/g" LICENSE
+    sed -i '/^---$/,/^---$/d' LICENSE
+  fi
 }
 
 build() {
