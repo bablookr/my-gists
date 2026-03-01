@@ -18,17 +18,17 @@ env:
 
 jobs:
   setup-and-run:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
       - name: Setup
-        run: brew install tree
+        run: sudo apt install tree
 
       - name: Run
         run: |
           cd sh
-          sh ${INPUT_SCRIPT_NAME}.sh ${ARGS}
-          tree -I venv
+          bash ${INPUT_SCRIPT_NAME}.sh ${ARGS}
+          tree -I .
